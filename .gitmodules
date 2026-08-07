@@ -1,0 +1,13 @@
+[submodule "godot/extern/godot-cpp"]
+	path = godot/extern/godot-cpp
+	url = https://github.com/godotengine/godot-cpp.git
+	branch = master
+[submodule "baseline/extern/asio/asio-src"]
+	path = baseline/extern/asio/asio-src
+	url = https://github.com/chriskohlhoff/asio.git
+[submodule "baseline/extern/json"]
+	path = baseline/extern/json
+	url = https://github.com/nlohmann/json.git
+[submodule "baseline/extern/nano-signal-slot/nano-signal-slot-src"]
+	path = baseline/extern/nano-signal-slot/nano-signal-slot-src
+	url = https://github.com/NoAvailableAlias/nano-signal-slot.git

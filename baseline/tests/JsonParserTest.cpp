@@ -1,6 +1,6 @@
 #include <gtest/gtest.h>
 
-#include "jsonParse.h"
+#include "JsonParser/jsonParser.h"
 #include "helpers/JsonParser/JsonParserReceiver.hpp"
 #include <string>
 #include <vector>

@@ -1,12 +1,10 @@
 add_subdirectory(SerialComm)
+add_subdirectory(JsonParser)
 
 target_sources(${PROJECT_NAME} 
     PRIVATE    
     
-    dataStruct_json.h
     mainLib.h
     mainLib.cpp
-    jsonParse.h
-    jsonParse.cpp
 )
 

@@ -1,9 +1,10 @@
 #pragma once
-#include "jsonParse.h"
+
 #include <thread>
 
 struct InputFrame;
 class SerialComm;
+class JsonParser;
 typedef void (*InputCallBack)(InputFrame);
 
 class CastasnetInternal {

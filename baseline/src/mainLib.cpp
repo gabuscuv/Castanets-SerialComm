@@ -1,7 +1,6 @@
 #include "mainLib.h"
 #include "SerialComm/serialComm.hpp"
-#include "SerialComm/serialCommImpl.h"
-#include "jsonParse.h"
+#include "JsonParser/jsonParser.h"
 #include "spdlog/spdlog.h"
 
 std::unique_ptr<CastasnetInternal> CastasnetInternal::instance = nullptr;

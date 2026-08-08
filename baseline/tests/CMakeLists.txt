@@ -13,6 +13,7 @@ target_include_directories(CASTANETS_SERIALCOMM_TESTS
     PRIVATE
         ${PROJECT_SOURCE_DIR}/src
         ${PROJECT_SOURCE_DIR}/extern/nano-signal-slot/nano-signal-slot-src
+        ${PROJECT_SOURCE_DIR}/extern/json/include
 )
 
 target_link_libraries(CASTANETS_SERIALCOMM_TESTS

@@ -5,9 +5,22 @@ SET(PROJECT_NAME CASTANETS_SERIALCOMM)
 project(${PROJECT_NAME} VERSION 0.0.1 DESCRIPTION "mylib description")
 
 set(CMAKE_INSTALL_PREFIX "${CMAKE_CURRENT_SOURCE_DIR}/install")
+
+option(BUILD_TESTS "Build tests" ON)
+
+add_library(${PROJECT_NAME} 
+    SHARED
+    src/lib.cpp
+)
 add_subdirectory(extern)
 add_subdirectory(src)
 
+
+
+if(BUILD_TESTS)
+    enable_testing()
+    add_subdirectory(tests)
+endif()
 set_target_properties(${PROJECT_NAME} PROPERTIES
     POSITION_INDEPENDENT_CODE ON
     OUTPUT_NAME ${PROJECT_NAME}
@@ -38,20 +51,24 @@ else()
     )
 endif()
 
-target_include_directories(${PROJECT_NAME} 
-    PUBLIC 
-    ${CMAKE_CURRENT_SOURCE_DIR}/include
-    ${CMAKE_CURRENT_SOURCE_DIR}/extern/asio/asio-src/include
-    ${CMAKE_CURRENT_SOURCE_DIR}/extern/json/include
-    ${CMAKE_CURRENT_SOURCE_DIR}/extern/nano-signal-slot/nano-signal-slot-src
+target_include_directories(${PROJECT_NAME}
+    PUBLIC
+        ${CMAKE_CURRENT_SOURCE_DIR}/include
+
+    PRIVATE
+        ${CMAKE_CURRENT_SOURCE_DIR}/src
+        ${CMAKE_CURRENT_SOURCE_DIR}/extern/asio/asio-src/include
+        ${CMAKE_CURRENT_SOURCE_DIR}/extern/json/include
+        ${CMAKE_CURRENT_SOURCE_DIR}/extern/nano-signal-slot/nano-signal-slot-src
+        ${CMAKE_CURRENT_SOURCE_DIR}/extern/spdlog/include
 )
 
 target_link_libraries( ${PROJECT_NAME}
-    PUBLIC
-    asio
     PRIVATE
+    asio
     nlohmann_json::nlohmann_json
     nano_signal_slot
+    spdlog::spdlog_header_only
 )
 
 if (CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)

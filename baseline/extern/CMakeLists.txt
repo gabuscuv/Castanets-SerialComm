@@ -5,7 +5,9 @@ add_subdirectory(asio)
 set(JSON_BuildTests OFF CACHE INTERNAL "")
 add_subdirectory(json)
 
-set(CMAKE_EXPORT_COMPILE_COMMANDS OFF CACHE INTERNAL "")
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON CACHE INTERNAL "")
 
 set(NANO_BUILD_TESTS OFF CACHE INTERNAL "Build unit tests")
 add_subdirectory(nano-signal-slot)
+
+add_subdirectory(spdlog)

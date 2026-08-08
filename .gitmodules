@@ -11,3 +11,6 @@
 [submodule "baseline/extern/nano-signal-slot/nano-signal-slot-src"]
 	path = baseline/extern/nano-signal-slot/nano-signal-slot-src
 	url = https://github.com/NoAvailableAlias/nano-signal-slot.git
+[submodule "baseline/extern/spdlog"]
+	path = baseline/extern/spdlog
+	url = https://github.com/gabime/spdlog.git

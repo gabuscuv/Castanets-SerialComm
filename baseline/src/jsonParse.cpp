@@ -1,5 +1,7 @@
 #include "jsonParse.h"
 #include "nlohmann/json.hpp"
+#include "dataStruct_json.h"
+
 using json = nlohmann::json;
 
 InputFrame JsonParser::parseJson(const char* json)

@@ -1,6 +1,7 @@
 #include "lib.h"
 #include <iostream>
 #include "mainLib.h"
+#include "spdlog/spdlog.h"
 
 int getExample()
 {
@@ -9,14 +10,14 @@ int getExample()
 
 int castasnet_exit()
 {
+    CastasnetInternal::getInstance()->exit();
     return 0;
 }
 
-int castasnet_init(InputCallBack functionCallback)
-{
-    std::cout << "Starting Init castasnet." << std::endl;
-    K2_Castasnet::getInstance()->setNewParsedCallback(functionCallback);
-    K2_Castasnet::getInstance()->init();
+int castasnet_init(InputCallBack functionCallback) {
+    spdlog::info("Starting Init castasnet Entry Point.");
+    CastasnetInternal::getInstance()->setNewParsedCallback(functionCallback);
+    CastasnetInternal::getInstance()->init();
 
     return 0;
 };

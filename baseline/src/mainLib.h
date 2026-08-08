@@ -6,20 +6,22 @@ struct InputFrame;
 class SerialComm;
 typedef void (*InputCallBack)(InputFrame);
 
-class K2_Castasnet {
+class CastasnetInternal {
 
 public:
-    static K2_Castasnet* getInstance();
+    static CastasnetInternal* getInstance();
     void init();
     void setNewParsedCallback(InputCallBack dataParsed);
+    void exit();
 private:
-  
-    static K2_Castasnet* instance;
+    
+    static std::unique_ptr<CastasnetInternal> instance;
     const static int sleep_timeout = 1; // seconds
-    bool is_running = false;
+    bool isRunning = false;
     static std::thread threadId;
-    JsonParser * jsonParser;
-    SerialComm * serialComm;
+    std::unique_ptr<JsonParser> jsonParser;
+    std::unique_ptr<SerialComm> serialComm;
+    InputCallBack inputCallback;
 
     void emitGameEngineCallback(InputFrame dataParsed);
 

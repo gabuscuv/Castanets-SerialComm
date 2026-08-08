@@ -1,36 +1,61 @@
 #include "mainLib.h"
-#include "serialComm.h"
+#include "SerialComm/serialComm.hpp"
+#include "SerialComm/serialCommImpl.h"
 #include "jsonParse.h"
+#include "spdlog/spdlog.h"
 
-K2_Castasnet* K2_Castasnet::instance = nullptr;
+std::unique_ptr<CastasnetInternal> CastasnetInternal::instance = nullptr;
 
-void K2_Castasnet::init() {
-    jsonParser = new JsonParser;
-    serialComm = new SerialComm;
+void CastasnetInternal::init() {
+    spdlog::info("Initializing Castanet Internals");
+    jsonParser = std::make_unique<JsonParser>();
+    serialComm = std::make_unique<SerialComm>();
 
     jsonParser->newDataAvaliable
-        .connect<&K2_Castasnet::emitGameEngineCallback>(this);
+        .connect<&CastasnetInternal::emitGameEngineCallback>(this);
 
-    serialComm->newDataAvaliable
-        .connect<&JsonParser::onNewData>(jsonParser);
+    serialComm->getNewDataAvaliable()
+        ->connect<&JsonParser::onNewData>(jsonParser.get());
 
-    serialComm->init();
+    serialComm->start();
+
+    isRunning = true;
 }
 
-void K2_Castasnet::setNewParsedCallback(InputCallBack dataParsed) {
-  
-}
-
-void K2_Castasnet::emitGameEngineCallback(InputFrame dataParsed)
+void CastasnetInternal::exit()
 {
-    
+    if (!isRunning)
+    {
+        spdlog::warn("Called Exit when it's not running");
+        return;
+    }
+
+    spdlog::info("Exiting Castanet Internals");
+
+    serialComm->stop();
+
+    serialComm.reset();
+    jsonParser.reset();
+
+    isRunning = false;
 }
 
-K2_Castasnet *K2_Castasnet::getInstance() {
+void CastasnetInternal::setNewParsedCallback(InputCallBack dataParsed)
+{
+    inputCallback = dataParsed;
+}
+
+void CastasnetInternal::emitGameEngineCallback(InputFrame dataParsed)
+{
+    inputCallback(dataParsed);
+}
+
+CastasnetInternal *CastasnetInternal::getInstance()
+{
     if (instance == nullptr)
     {
-        instance = new K2_Castasnet();
-    }
+        instance = std::make_unique<CastasnetInternal>();
+    };
     
-    return instance;
+    return instance.get();
 }

@@ -3,17 +3,28 @@
 #include "spdlog/spdlog.h"
 #include <thread>
 #include <string>
+#include "serialDetector.h"
 
+std::string findCastanetPort()
+{
+    auto device = SerialDetector::findCastanetHub();
+
+    if (device.port.empty())
+    {
+        throw std::runtime_error(
+            "Castanets Hub not found");
+    }
+    spdlog::info("Selected: {} {}", device.description, device.port);
+    return device.port;
+}
 
 SerialComm::Impl::Impl(std::string device, unsigned int baudRate)
-    : Impl{}
+    : ioContext{}, serial{ioContext, device}
 {
 }
 
-SerialComm::Impl::Impl():
-    serial{asio::serial_port(ioContext)}
+SerialComm::Impl::Impl() : ioContext{}, serial{ioContext, findCastanetPort()}
 {
-  
 }
 
 SerialComm::Impl::~Impl()
@@ -26,9 +37,15 @@ SerialComm::Impl::~Impl()
 
 int SerialComm::Impl::start()
 {
-    try {
+    spdlog::info("Starting Serial Threading");
+
+    try
+    {
         thread = std::thread(&SerialComm::Impl::loop, this);
-    } catch(...) {
+        running = true;
+    }
+    catch (...)
+    {
         spdlog::error("Failed to Create Thread");
         return -1;
     }
@@ -38,6 +55,16 @@ int SerialComm::Impl::start()
 int SerialComm::Impl::stop()
 {
     running = false;
+
+    std::error_code ec;
+    serial.cancel(ec);
+    serial.close(ec);
+
+    if (thread.joinable())
+    {
+        thread.join();
+    }
+
     return 0;
 }
 
@@ -46,43 +73,61 @@ bool SerialComm::Impl::isRunning() const noexcept
     return running;
 }
 
-Nano::Signal<void(const char*)>* SerialComm::Impl::getNewDataAvaliable()
+Nano::Signal<void(const char *)> *SerialComm::Impl::getNewDataAvaliable()
 {
     return &newDataAvaliable;
 }
 
 void SerialComm::Impl::loop()
 {
-    std::array<std::uint8_t, 1024> buffer{};
-    running = true;
+    constexpr std::size_t BufferSize = 1024;
+
+    std::array<std::uint8_t, BufferSize> buffer{};
+    std::string receiveBuffer;
 
     while (running)
     {
         std::error_code ec;
 
-            const auto bytesRead =
-                serial.read_some(
-                    asio::buffer(buffer),
-                    ec);
+        const auto bytesRead = serial.read_some(asio::buffer(buffer), ec);
 
-            if (ec)
+        if (ec)
+        {
+            if (!running)
             {
-                if (!running)
-                    break;
-
-                // Handle serial error.
                 break;
             }
 
-            if (bytesRead > 0)
-            {
-                // onData(
-                //     buffer.data(),
-                //     bytesRead);
-            }
+            spdlog::error("Serial read error: {}", ec.message());
+
+            break;
         }
-    std::string _PLACEHOLDER;
 
-    newDataAvaliable.fire(_PLACEHOLDER.c_str());
+        if (bytesRead == 0)
+        {
+            continue;
+        }
+
+        receiveBuffer.append(
+            reinterpret_cast<const char *>(buffer.data()),
+            bytesRead);
+
+        // Process complete JSON messages.
+        std::size_t delimiter;
+
+        while ((delimiter = receiveBuffer.find('\n')) != std::string::npos)
+        {
+            std::string json = receiveBuffer.substr(0, delimiter);
+            receiveBuffer.erase(0, delimiter + 1);
+
+            if (json.empty())
+            {
+                continue;
+            }
+
+            newDataAvaliable.fire(json.c_str());
+        }
+    }
+
+    running = false;
 }
-

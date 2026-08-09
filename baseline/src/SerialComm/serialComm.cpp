@@ -1,9 +1,7 @@
 #include "SerialComm/serialComm.hpp"
 #include "SerialComm/serialCommImpl.h"
 
-
-SerialComm::SerialComm(
-    )
+SerialComm::SerialComm()
     : impl_(std::make_unique<Impl>())
 {
 }
@@ -31,6 +29,7 @@ void SerialComm::stop()
 
 bool SerialComm::isRunning() const noexcept { return impl_->isRunning(); }
 
-Nano::Signal<void(const char *)> * SerialComm::getNewDataAvaliable() {
-  return impl_->getNewDataAvaliable();
+Nano::Signal<void(const char *)> *SerialComm::getNewDataAvaliable()
+{
+    return impl_->getNewDataAvaliable();
 }

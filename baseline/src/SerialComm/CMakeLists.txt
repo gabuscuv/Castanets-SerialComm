@@ -20,4 +20,7 @@ target_sources(${PROJECT_NAME}
     ${CMAKE_CURRENT_LIST_DIR}/serialComm.hpp
     ${CMAKE_CURRENT_LIST_DIR}/serialCommImpl.cpp
     ${CMAKE_CURRENT_LIST_DIR}/serialCommImpl.h
+    
+    ${CMAKE_CURRENT_LIST_DIR}/serialDetector.h
+    ${CMAKE_CURRENT_LIST_DIR}/serialDetector.cpp
 )

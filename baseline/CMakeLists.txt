@@ -10,17 +10,17 @@ option(BUILD_TESTS "Build tests" ON)
 
 add_library(${PROJECT_NAME} 
     SHARED
-    src/lib.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/lib.cpp
 )
+
 add_subdirectory(extern)
 add_subdirectory(src)
-
-
 
 if(BUILD_TESTS)
     enable_testing()
     add_subdirectory(tests)
 endif()
+
 set_target_properties(${PROJECT_NAME} PROPERTIES
     POSITION_INDEPENDENT_CODE ON
     OUTPUT_NAME ${PROJECT_NAME}
@@ -57,16 +57,12 @@ target_include_directories(${PROJECT_NAME}
 
     PRIVATE
         ${CMAKE_CURRENT_SOURCE_DIR}/src
-        ${CMAKE_CURRENT_SOURCE_DIR}/extern/asio/asio-src/include
-        ${CMAKE_CURRENT_SOURCE_DIR}/extern/json/include
         ${CMAKE_CURRENT_SOURCE_DIR}/extern/nano-signal-slot/nano-signal-slot-src
         ${CMAKE_CURRENT_SOURCE_DIR}/extern/spdlog/include
 )
 
 target_link_libraries( ${PROJECT_NAME}
     PRIVATE
-    asio
-    nlohmann_json::nlohmann_json
     nano_signal_slot
     spdlog::spdlog_header_only
 )
@@ -84,21 +80,6 @@ install(TARGETS ${PROJECT_NAME}
         ${CMAKE_CURRENT_SOURCE_DIR}/../csharp-unity/Plugins/${CMAKE_SYSTEM_NAME}
 )
 
-install(TARGETS asio
-    DESTINATION 
-        ${CMAKE_CURRENT_SOURCE_DIR}/../csharp-unity/Plugins/${CMAKE_SYSTEM_NAME}
-)
-
-install(TARGETS nlohmann_json
-    DESTINATION 
-        ${CMAKE_CURRENT_SOURCE_DIR}/../csharp-unity/Plugins/${CMAKE_SYSTEM_NAME}
-)
-
-install(TARGETS nano_signal_slot
-    DESTINATION 
-        ${CMAKE_CURRENT_SOURCE_DIR}/../csharp-unity/Plugins/${CMAKE_SYSTEM_NAME}
-)
-
 ## Unreal Engine
 # Main library
 install(TARGETS ${PROJECT_NAME} 
@@ -108,23 +89,3 @@ PUBLIC_HEADER
     DESTINATION
     ${CMAKE_CURRENT_SOURCE_DIR}/../unreal/Source/LibNFCCrossEngine/Public
 )
-#Library Depencencies
-install(TARGETS asio
-   DESTINATION 
-        ${CMAKE_CURRENT_SOURCE_DIR}/../unreal/Extras/libcastanets/${CMAKE_SYSTEM_NAME}/
-)
-install(TARGETS nlohmann_json
-    DESTINATION 
-        ${CMAKE_CURRENT_SOURCE_DIR}/../unreal/Extras/libcastanets/${CMAKE_SYSTEM_NAME}/
-)
-install(TARGETS nano_signal_slot
-    DESTINATION 
-        ${CMAKE_CURRENT_SOURCE_DIR}/../unreal/Extras/libcastanets/${CMAKE_SYSTEM_NAME}/
-)
-
-if (LINUX)
-# install(TARGETS libusb-compat
-#     DESTINATION 
-#         ${CMAKE_CURRENT_SOURCE_DIR}/../unreal/Extras/libcastanets/${CMAKE_SYSTEM_NAME}/
-# )
-endif()

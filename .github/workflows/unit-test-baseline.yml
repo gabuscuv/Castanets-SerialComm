@@ -34,6 +34,7 @@ jobs:
           sudo apt install -y \
             cmake \
             ninja-build \
+            libudev-dev \
             libgtest-dev
 
       - name: Configure CMake
